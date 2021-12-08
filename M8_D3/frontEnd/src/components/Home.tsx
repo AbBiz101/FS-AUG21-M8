@@ -208,7 +208,7 @@ const Home = () => {
 							<ListGroupItem>No users yet!</ListGroupItem>
 						)}
 						{onlineUsers.map((user) => (
-							<Link to="/user.id">
+							<Link to={user.id}>
 								<ListGroupItem
 									onClick={() => openUserRoom(user.id)}
 									key={user.id}
