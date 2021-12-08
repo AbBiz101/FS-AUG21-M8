@@ -11,7 +11,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { io } from 'socket.io-client';
 import { IUser } from '../interfaces/IUser';
 import IMessage from '../interfaces/IMessage';
-
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 const ADDRESS = 'http://localhost:3000'; // <-- address of the BACKEND PROCESS
 const socket = io(ADDRESS, { transports: ['websocket'] });
 // io establishes a connection with our backend socket.io process
@@ -113,11 +113,11 @@ const Home = () => {
 		socket.emit('one-to-one-chat', {
 			room: roomID,
 		});
-  };
-  
-  // const sendMessage = (message: string) => {
-  //   socket.emit('sendmessage', {message, room})
-  // }
+	};
+
+	// const sendMessage = (message: string) => {
+	//   socket.emit('sendmessage', {message, room})
+	// }
 
 	const handleUsernameSubmit = (e: FormEvent) => {
 		e.preventDefault();
@@ -178,18 +178,18 @@ const Home = () => {
 						/>
 					</Form>
 
-					 <ListGroup>
+					<ListGroup>
 						{chatHistory.map((message, i) => (
 							<ListGroupItem key={i}>
-								 <strong>{message.sender}</strong>
+								<strong>{message.sender}</strong>
 								<span className="mx-1"> | </span>
 								<span>{message.text}</span>
 								<span className="ml-2" style={{ fontSize: '0.7rem' }}>
 									{new Date(message.timestamp).toLocaleTimeString('en-US')}
-								</span> 
+								</span>
 							</ListGroupItem>
 						))}
-					</ListGroup> 
+					</ListGroup>
 
 					<Form onSubmit={handleMessageSubmit}>
 						<FormControl
@@ -208,12 +208,14 @@ const Home = () => {
 							<ListGroupItem>No users yet!</ListGroupItem>
 						)}
 						{onlineUsers.map((user) => (
-							<ListGroupItem
-								onClick={() => openUserRoom(user.id)}
-								key={user.id}
-							>
-								{user.username}
-							</ListGroupItem>
+							<Link to="/user.id">
+								<ListGroupItem
+									onClick={() => openUserRoom(user.id)}
+									key={user.id}
+								>
+									{user.username}
+								</ListGroupItem>
+							</Link>
 						))}
 					</ListGroup>
 				</Col>

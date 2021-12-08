@@ -40,6 +40,7 @@ io.on('connection', (socket) => {
 	// When we get a message from the frontend we broadcast it to all users in the room
     socket.on('sendmessage', ({ message, room }) => {
         console.log(message, room)
+		socket.join(room);
 
         //socket.broadcast.emit("message", message) // this is sending to all users except the sender
 
