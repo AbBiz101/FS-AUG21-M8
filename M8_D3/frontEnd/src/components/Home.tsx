@@ -138,7 +138,7 @@ const Home = () => {
 			timestamp: Date.now(), // <-- ms expired 01/01/1970
 		};
 
-		socket.emit('sendmessage', { message: newMessage, room });
+		socket.emit('sendmessage', { message: newMessage, room:room: });
 		// this is sending my message to the server. I'm not receiving back my own message,
 		// so I need to append it manually to my chat history.
 		// but all the other connected clients are going to receive it back from the server!
