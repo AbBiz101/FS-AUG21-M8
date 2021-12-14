@@ -50,7 +50,7 @@ const deletePostAdmin = async (req, res, next) => {
 	}
 };
 
-const endpoints = {
+const postEndpoints = {
 	getPost,
 	createPost,
 	editPost,
@@ -60,4 +60,4 @@ const endpoints = {
 	deletePostAdmin,
 };
 
-export default endpoints;
+export default postEndpoints;

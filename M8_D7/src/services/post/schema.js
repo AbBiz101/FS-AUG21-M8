@@ -12,7 +12,7 @@ const PostSchema = new Schema(
 			value: { type: Number, required: true },
 			unit: { type: String, required: true },
         },
-        author:{ type: String, ref}
+        // author:{ type: String, ref}
 	},
 	{ timestamps: true },
 );
