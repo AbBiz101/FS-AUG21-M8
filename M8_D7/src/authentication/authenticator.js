@@ -1,7 +1,7 @@
 import atob from 'atob';
 import createError from 'http-errors';
-import { JWTverifier } from './token.js';
 import UserModel from '../services/user/schema.js';
+import { JWTverifier, JWTTokenGenerator } from './token.js';
 
 export const basicAuthentication = async (req, res, next) => {
 	if (!req.headers.authorization) {
@@ -19,6 +19,7 @@ export const basicAuthentication = async (req, res, next) => {
 		}
 	}
 };
+
 export const adminAuthentication = async (req, res, next) => {
 	if (!req.user.role === 'ADMIN') {
 		console.log(2222);
@@ -40,12 +41,17 @@ export const JWTAuthentication = async (req, res, next) => {
 				req.user = user;
 				next();
 			} else {
-				next(createHttpError(401, 'User dose not exist'));
+				next(createError(401, 'User dose not exist'));
 			}
 		} catch (error) {
-			next(createHttpError(401, 'Token not valid!'));
+			next(createError(401, 'Token not valid!'));
 		}
 	} else {
-		next(createHttpError(401, 'Please provide a token.'));
+		next(createError(401, 'Please provide a token.'));
 	}
+};
+
+export const JWTAuthenticatorForLogin = async (user) => {
+	const accessToken = await JWTTokenGenerator({ _id: user._id });
+	return accessToken;
 };

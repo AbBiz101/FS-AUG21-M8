@@ -2,11 +2,13 @@ import express from 'express';
 import endpoints from './router.js';
 import postEndpoints from '../post/router.js';
 import {
-	basicAuthentication,
+	JWTAuthentication,
 	adminAuthentication,
+	basicAuthentication,
 } from '../../authentication/authenticator.js';
 
 const {
+	login,
 	getUser,
 	editUser,
 	createUser,
@@ -29,34 +31,36 @@ const {
 
 const usersRouter = express.Router();
 
+usersRouter.route('/login').post(login);
+
 usersRouter
 	.route('/')
 	.post(createUser)
-	.get(basicAuthentication, adminAuthentication, getAllUserAdmin);
+	.get(JWTAuthentication, adminAuthentication, getAllUserAdmin);
 
 /**************************************** USER *************************************************/
 usersRouter
 	.route('/me')
-	.get(basicAuthentication, getUser)
-	.put(basicAuthentication, editUser)
-	.delete(basicAuthentication, deleteUser);
+	.get(JWTAuthentication, getUser)
+	.put(JWTAuthentication, editUser)
+	.delete(JWTAuthentication, deleteUser);
 usersRouter
 	.route('/me/post')
-	.get(basicAuthentication, getPost)
-	.put(basicAuthentication, editPost)
-	.post(basicAuthentication, createPost)
-	.delete(basicAuthentication, deletePost);
+	.get(JWTAuthentication, getPost)
+	.put(JWTAuthentication, editPost)
+	.post(JWTAuthentication, createPost)
+	.delete(JWTAuthentication, deletePost);
 
 /**************************************** ADMIN *************************************************/
 usersRouter
 	.route('/:id')
-	.get(basicAuthentication, adminAuthentication, getUserAdmin)
-	.put(basicAuthentication, adminAuthentication, editUserAdmin)
-	.delete(basicAuthentication, adminAuthentication, deleteUserAdmin);
+	.get(JWTAuthentication, adminAuthentication, getUserAdmin)
+	.put(JWTAuthentication, adminAuthentication, editUserAdmin)
+	.delete(JWTAuthentication, adminAuthentication, deleteUserAdmin);
 usersRouter
 	.route('/:id/post')
-	.get(basicAuthentication, adminAuthentication, getPostAdmin)
-	.put(basicAuthentication, adminAuthentication, editPostAdmin)
-	.delete(basicAuthentication, adminAuthentication, deletePostAdmin);
+	.get(JWTAuthentication, adminAuthentication, getPostAdmin)
+	.put(JWTAuthentication, adminAuthentication, editPostAdmin)
+	.delete(JWTAuthentication, adminAuthentication, deletePostAdmin);
 
 export default usersRouter;

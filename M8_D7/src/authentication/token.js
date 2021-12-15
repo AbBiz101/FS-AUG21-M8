@@ -1,11 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export const JWTAuthenticator= async (user) => {
-	const accessToken = await generateJWTToken({ _id: user._id });
-	return accessToken;
-};
-
-const JWTTokenGenerator = (payload) =>
+export const JWTTokenGenerator = (payload) =>
 	new Promise((resolve, reject) =>
 		jwt.sign(
 			payload,

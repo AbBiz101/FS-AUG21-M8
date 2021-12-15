@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
 import UserModel from './schema.js';
-
+import { JWTAuthenticatorForLogin } from '../../authentication/authenticator.js';
 const createUser = async (req, res, next) => {
 	try {
 		const newUser = await new UserModel(req.body).save();
@@ -9,6 +9,22 @@ const createUser = async (req, res, next) => {
 		res.status(201).send(newUser);
 	} catch (error) {
 		next(createHttpError(401, 'can not creat user'));
+	}
+};
+
+const login = async (req, res, next) => {
+	try {
+		const { email, password } = req.body;
+		const user = await UserModel.checkCredentials(email, password);
+
+		if (user) {
+			const loginToken = await JWTAuthenticatorForLogin(user);
+			res.send({ loginToken });
+		} else {
+			next(createHttpError(401, 'User not found'));
+		}
+	} catch (error) {
+		next(error);
 	}
 };
 
@@ -84,6 +100,7 @@ const deleteUserAdmin = async (req, res, next) => {
 };
 
 const endpoints = {
+	login,
 	getUser,
 	editUser,
 	deleteUser,
