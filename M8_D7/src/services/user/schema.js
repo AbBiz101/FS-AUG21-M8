@@ -26,11 +26,12 @@ UserSchema.pre('save', async function (next) {
 	next();
 });
 
-UserSchema.method.toJSON = function () {
+UserSchema.methods.toJSON = function () {
 	const user = this;
+	console.log(user);
 	const userObj = user.toObject();
-	delete userObj._doc.password;
-	delete userObj._doc.__v;
+	delete userObj.password;
+	delete userObj.__v;
 	return userObj;
 };
 
