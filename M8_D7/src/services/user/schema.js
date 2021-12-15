@@ -10,7 +10,8 @@ const UserSchema = new Schema(
 		avatar: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
-		post: { type: [], default: '' },
+		role: { type: String, default: 'USER' },
+		post: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
 	},
 	{ timestamps: true },
 );
@@ -28,7 +29,8 @@ UserSchema.pre('save', async function (next) {
 UserSchema.method.toJSON = function () {
 	const user = this;
 	const userObj = user.toObject();
-	delete userObj.password;
+	delete userObj._doc.password;
+	delete userObj._doc.__v;
 	return userObj;
 };
 

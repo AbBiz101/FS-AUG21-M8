@@ -1,5 +1,6 @@
 import atob from 'atob';
 import createError from 'http-errors';
+import { JWTverifier } from './token.js';
 import UserModel from '../services/user/schema.js';
 
 export const basicAuthentication = async (req, res, next) => {
@@ -16,5 +17,35 @@ export const basicAuthentication = async (req, res, next) => {
 		} else {
 			next(createError(401, 'User name or password is incorrect.'));
 		}
+	}
+};
+export const adminAuthentication = async (req, res, next) => {
+	if (!req.user.role === 'ADMIN') {
+		console.log(2222);
+		next(createError(403, 'Authorized admin only.'));
+	} else {
+		next();
+	}
+};
+
+export const JWTAuthentication = async (req, res, next) => {
+	if (req.headers.authorization) {
+		try {
+			//get the token
+			const token = req.headers.authorization.replace('Bearer ', '');
+			//using the function from tools verify the token with the Signature
+			const decodedToken = await JWTverifier(token);
+			const user = await UserModel.findById(decodedToken._id);
+			if (user) {
+				req.user = user;
+				next();
+			} else {
+				next(createHttpError(401, 'User dose not exist'));
+			}
+		} catch (error) {
+			next(createHttpError(401, 'Token not valid!'));
+		}
+	} else {
+		next(createHttpError(401, 'Please provide a token.'));
 	}
 };

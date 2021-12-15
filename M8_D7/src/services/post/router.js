@@ -1,6 +1,10 @@
 import createHttpError from 'http-errors';
 import PostModel from './schema.js';
 
+
+/**************************************** USER *************************************************/
+
+
 const getPost = async (req, res, next) => {
 	try {
 	} catch (error) {
@@ -28,6 +32,9 @@ const deletePost = async (req, res, next) => {
 		next(error);
 	}
 };
+
+
+/**************************************** ADMIN *************************************************/
 
 const getPostAdmin = async (req, res, next) => {
 	try {

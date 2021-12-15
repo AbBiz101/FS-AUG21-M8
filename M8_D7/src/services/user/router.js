@@ -1,23 +1,25 @@
-import { basicAuthentication } from '../../authentication/authenticator.js';
 import createHttpError from 'http-errors';
 import UserModel from './schema.js';
 
-const getUser = async (req, res, next) => {
+const createUser = async (req, res, next) => {
 	try {
-		res.status(200).send(req.user);
+		const newUser = await new UserModel(req.body).save();
+		delete newUser._doc.password;
+		delete newUser._doc.__v;
+		res.status(201).send(newUser);
 	} catch (error) {
-		next(error);
+		next(createHttpError(401, 'can not creat user'));
 	}
 };
 
-const createUser = async (req, res, next) => {
-	console.log(req.body);
+/**************************************** USER *************************************************/
+
+const getUser = async (req, res, next) => {
 	try {
-		const newUser = new UserModel(req.body);
-		const { _id } = await newUser.save();
-		res.status(201).send({ _id });
+		console.log(req.user);
+		res.status(200).send(req.user);
 	} catch (error) {
-		next(createHttpError(401, 'can not creat user'));
+		next(error);
 	}
 };
 
@@ -25,9 +27,10 @@ const editUser = async (req, res, next) => {
 	try {
 		const body = req.body;
 		const oldUser = req.user;
-		req.user = { ...oldUser, ...body };
+		req.user = { ...req.user._doc, ...body };
 		await req.user.save();
-		res.send();
+		console.log(req.user);
+		res.send(req.user);
 	} catch (error) {
 		next(error);
 	}
@@ -41,18 +44,24 @@ const deleteUser = async (req, res, next) => {
 		next(error);
 	}
 };
-
-const getUserAdmin = async (req, res, next) => {
+/**************************************** ADMIN *************************************************/
+const getAllUserAdmin = async (req, res, next) => {
 	try {
-		const user = await UserModel.findById(req.params.id);
-		res.send(user);
+		const users = await UserModel.find();
+		// delete users._doc.password;
+		// delete users._doc.__v;
+		res.status(200).send(users);
 	} catch (error) {
 		next(error);
 	}
 };
 
-const createUserAdmin = async (req, res, next) => {
+const getUserAdmin = async (req, res, next) => {
 	try {
+		const user = await UserModel.findById(req.params.id);
+		delete users._doc.password;
+		delete users._doc.__v;
+		res.send(user);
 	} catch (error) {
 		next(error);
 	}
@@ -76,12 +85,12 @@ const deleteUserAdmin = async (req, res, next) => {
 
 const endpoints = {
 	getUser,
-	createUser,
 	editUser,
 	deleteUser,
+	createUser,
 	getUserAdmin,
-	createUserAdmin,
 	editUserAdmin,
+	getAllUserAdmin,
 	deleteUserAdmin,
 };
 

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import UserModel from '../user/schema.js';
 
 const { Schema, model } = mongoose;
 
@@ -11,8 +12,8 @@ const PostSchema = new Schema(
 		readTime: {
 			value: { type: Number, required: true },
 			unit: { type: String, required: true },
-        },
-        // author:{ type: String, ref}
+		},
+		author: { type: Schema.Types.ObjectId, ref: 'User' },
 	},
 	{ timestamps: true },
 );

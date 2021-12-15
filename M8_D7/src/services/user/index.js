@@ -1,7 +1,10 @@
 import express from 'express';
 import endpoints from './router.js';
 import postEndpoints from '../post/router.js';
-import { basicAuthentication } from '../../authentication/authenticator.js';
+import {
+	basicAuthentication,
+	adminAuthentication,
+} from '../../authentication/authenticator.js';
 
 const {
 	getUser,
@@ -10,7 +13,7 @@ const {
 	deleteUser,
 	getUserAdmin,
 	editUserAdmin,
-	createUserAdmin,
+	getAllUserAdmin,
 	deleteUserAdmin,
 } = endpoints;
 
@@ -26,32 +29,34 @@ const {
 
 const usersRouter = express.Router();
 
-usersRouter.route('/').post(createUser);
-
 usersRouter
-	.route('/me', basicAuthentication)
-	.get(getUser)
-	.put(editUser)
-	.delete(deleteUser);
+	.route('/')
+	.post(createUser)
+	.get(basicAuthentication, adminAuthentication, getAllUserAdmin);
 
+/**************************************** USER *************************************************/
 usersRouter
-	.route('/me/post', basicAuthentication)
-	.get(getPost)
-	.put(editPost)
-	.post(createPost)
-	.delete(deletePost);
+	.route('/me')
+	.get(basicAuthentication, getUser)
+	.put(basicAuthentication, editUser)
+	.delete(basicAuthentication, deleteUser);
+usersRouter
+	.route('/me/post')
+	.get(basicAuthentication, getPost)
+	.put(basicAuthentication, editPost)
+	.post(basicAuthentication, createPost)
+	.delete(basicAuthentication, deletePost);
 
+/**************************************** ADMIN *************************************************/
 usersRouter
 	.route('/:id')
-	.get(getUserAdmin)
-	.put(editUserAdmin)
-	.post(createUserAdmin)
-	.delete(deleteUserAdmin);
-
+	.get(basicAuthentication, adminAuthentication, getUserAdmin)
+	.put(basicAuthentication, adminAuthentication, editUserAdmin)
+	.delete(basicAuthentication, adminAuthentication, deleteUserAdmin);
 usersRouter
 	.route('/:id/post')
-	.get(getPostAdmin)
-	.put(editPostAdmin)
-	.delete(deletePostAdmin);
+	.get(basicAuthentication, adminAuthentication, getPostAdmin)
+	.put(basicAuthentication, adminAuthentication, editPostAdmin)
+	.delete(basicAuthentication, adminAuthentication, deletePostAdmin);
 
 export default usersRouter;
