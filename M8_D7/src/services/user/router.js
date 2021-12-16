@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import UserModel from './schema.js';
 import { JWTAuthenticatorForLogin } from '../../authentication/authenticator.js';
+
 const createUser = async (req, res, next) => {
 	try {
 		const newUser = await new UserModel(req.body).save();

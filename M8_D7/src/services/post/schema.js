@@ -13,7 +13,6 @@ const PostSchema = new Schema(
 			value: { type: Number, required: true },
 			unit: { type: String, required: true },
 		},
-		author: { type: Schema.Types.ObjectId, ref: 'User' },
 	},
 	{ timestamps: true },
 );
