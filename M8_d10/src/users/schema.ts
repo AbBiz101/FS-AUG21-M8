@@ -1,9 +1,30 @@
-import mongoose from 'mongoose';
+import mongoose ,{ Model }from 'mongoose';
 import bcrypt from 'bcrypt';
+
+interface IUsers {
+	firstName: string;
+	lastName: string;
+	email: string;
+	password: string;
+	role: string;
+	_id: string;
+}
+
+declare global {
+	namespace Express {
+		interface Request {
+			user?: IUsers;
+		}
+	}
+}
 
 const { Schema, model } = mongoose;
 
-export const UserSchema = new mongoose.Schema(
+interface UserModel extends Model<IUsers, UserModel> {
+	checkCredentials(email: string, password: string): any;
+}
+
+export const UserSchema = new Schema<IUsers>(
 	{
 		firstName: { type: String, required: true },
 		lastName: { type: String, required: true },
@@ -16,7 +37,7 @@ export const UserSchema = new mongoose.Schema(
 	},
 );
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre<any>('save', async function (next) {
 	const user = this;
 	const password = user.password;
 	if (user.isModified('password')) {
@@ -53,3 +74,5 @@ UserSchema.statics.checkCredentials = async function (email, passWord) {
 };
 
 export default model('User', UserSchema);
+
+// export const UserModel = mongoose.model('user', UserSchema);

@@ -1,7 +1,7 @@
 import express from 'express';
 import accomodationRouter from './accomodation/index';
 import destinationRouter from './destination/index';
-import userRouter from './users/index';
+import {userRouter,hostRouter} from './users/index';
 import listEndpoints from 'express-list-endpoints';
 
 const app = express();
@@ -15,5 +15,6 @@ app.get('/test', (req, res) => {
 app.use('/accomodation', accomodationRouter);
 app.use('/destination', destinationRouter);
 app.use('/user', userRouter);
+app.use('/host', hostRouter);
 console.table(listEndpoints(app));
 export { app };
