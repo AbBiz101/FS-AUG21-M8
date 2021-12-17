@@ -1,6 +1,8 @@
 import createHttpError from 'http-errors';
 import UserModel from './schema.js';
 import { JWTAuthenticatorForLogin } from '../../authentication/authenticator.js';
+import passport from 'passport';
+
 
 const createUser = async (req, res, next) => {
 	try {
@@ -28,6 +30,8 @@ const login = async (req, res, next) => {
 		next(error);
 	}
 };
+
+
 
 /**************************************** USER *************************************************/
 
@@ -111,5 +115,6 @@ const endpoints = {
 	getAllUserAdmin,
 	deleteUserAdmin,
 };
+
 
 export default endpoints;

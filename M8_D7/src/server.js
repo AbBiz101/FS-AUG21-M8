@@ -4,15 +4,22 @@ import mongoose from 'mongoose';
 import { errorHandler } from './errorHandler.js';
 import usersRouter from './services/user/index.js';
 import listEndpoints from 'express-list-endpoints';
+import passport from 'passport';
+import { googleOAuth } from './authentication/authenticator.js';
+
 
 const server = express();
 
 server.use(cors());
 server.use(express.json());
 
+
+passport.use('google', googleOAuth);
+server.use(passport.initialize());
+
 server.use('/users', usersRouter);
 
-// server.use(errorHandler);
+server.use(errorHandler);
 
 console.table(listEndpoints(server));
 

@@ -1,7 +1,11 @@
 import atob from 'atob';
+import passport from 'passport';
 import createError from 'http-errors';
 import UserModel from '../services/user/schema.js';
 import { JWTverifier, JWTTokenGenerator } from './token.js';
+import GoogleStrategy from 'passport-google-oauth20';
+
+/*****************************************BASIC Auth*******************************************************/
 
 export const basicAuthentication = async (req, res, next) => {
 	try {
@@ -32,6 +36,8 @@ export const adminAuthentication = async (req, res, next) => {
 	}
 };
 
+/*****************************************JWT Auth*******************************************************/
+
 export const JWTAuthentication = async (req, res, next) => {
 	if (req.headers.authorization) {
 		try {
@@ -58,3 +64,24 @@ export const JWTAuthenticatorForLogin = async (user) => {
 	const accessToken = await JWTTokenGenerator({ _id: user._id });
 	return accessToken;
 };
+
+/*****************************************OAuth*******************************************************/
+export const googleOAuth = new GoogleStrategy(
+	{
+		clientID: process.env.GOOGLE_CLIENT_ID,
+		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+		callbackURL: `${process.env.API_URL}/users/googleRedirect`,
+	},
+	async (accessToken, profile, passportNext) => {
+		try {
+			console.log('OAuth-profile-', profile);
+			const user = await UserModel.findOne({ googleOAuth: profile.id });
+			if (user) {
+				const token = await JWTAuthentication(user);
+			} else {
+			}
+		} catch (error) {
+			passportNext(error);
+		}
+	},
+);

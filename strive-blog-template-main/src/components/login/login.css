@@ -1,0 +1,8 @@
+.loginComponent {
+	margin: 18rem 35rem;
+}
+
+.form_btns {
+	display: flex;
+	justify-content: space-between;
+}

@@ -33,6 +33,7 @@ const usersRouter = express.Router();
 
 usersRouter.route('/register').post(createUser);
 usersRouter.route('/login').post(login);
+usersRouter.route('/login').post(login);
 
 usersRouter
 	.route('/')
