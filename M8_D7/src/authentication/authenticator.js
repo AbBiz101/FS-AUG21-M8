@@ -1,5 +1,4 @@
 import atob from 'atob';
-import passport from 'passport';
 import createError from 'http-errors';
 import UserModel from '../services/user/schema.js';
 import {
@@ -8,7 +7,6 @@ import {
 	JWTRefreshTokenGenerator,
 	refreshJWTverifier,
 } from './token.js';
-import GoogleStrategy from 'passport-google-oauth20';
 
 /*****************************************BASIC Auth*******************************************************/
 
@@ -93,26 +91,3 @@ export const verifyRefreshTokenAndNewTokens = async (currentRefreshToken) => {
 		next(error);
 	}
 };
-
-/*****************************************OAuth*******************************************************/
-export const googleOAuth = new GoogleStrategy(
-	{
-		clientID: process.env.GOOGLE_CLIENT_ID,
-		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-		callbackURL: `${process.env.API_URL}/users/googleRedirect`,
-	},
-
-	async (accessToken, profile, passportNext) => {
-		try {
-			console.log('OAuth-profile-', profile);
-			const user = await UserModel.findOne({ googleOAuth: profile.id });
-			if (user) {
-				const accessToken = await JWTAuthentication(user);
-				// const refreshToken = await JWTRefreshTokenGenerator(user);
-			} else {
-			}
-		} catch (error) {
-			passportNext(error);
-		}
-	},
-);
