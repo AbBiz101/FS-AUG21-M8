@@ -2,7 +2,12 @@ import atob from 'atob';
 import passport from 'passport';
 import createError from 'http-errors';
 import UserModel from '../services/user/schema.js';
-import { JWTverifier, JWTTokenGenerator } from './token.js';
+import {
+	JWTverifier,
+	JWTTokenGenerator,
+	JWTRefreshTokenGenerator,
+	refreshJWTverifier,
+} from './token.js';
 import GoogleStrategy from 'passport-google-oauth20';
 
 /*****************************************BASIC Auth*******************************************************/
@@ -28,15 +33,25 @@ export const basicAuthentication = async (req, res, next) => {
 	}
 };
 
-export const adminAuthentication = async (req, res, next) => {
-	if (!req.user.role === 'ADMIN') {
-		next(createError(403, 'Authorized admin only.'));
-	} else {
+export const adminAuthentication = (req, res, next) => {
+	if (req.user.role === 'ADMIN') {
 		next();
+	} else {
+		next(createError(403, 'Authorized admin only.'));
 	}
 };
 
 /*****************************************JWT Auth*******************************************************/
+
+export const JWTAuthenticatorForLogin = async (user) => {
+	//generate both tokens and send it to FE + save the second token in the DB
+	console.log(user);
+	const accessToken = await JWTTokenGenerator({ _id: user._id });
+	const refreshToken = await JWTRefreshTokenGenerator({ _id: user._id });
+	user.refreshToken = refreshToken;
+	await user.save();
+	return { accessToken, refreshToken };
+};
 
 export const JWTAuthentication = async (req, res, next) => {
 	if (req.headers.authorization) {
@@ -60,9 +75,24 @@ export const JWTAuthentication = async (req, res, next) => {
 	}
 };
 
-export const JWTAuthenticatorForLogin = async (user) => {
-	const accessToken = await JWTTokenGenerator({ _id: user._id });
-	return accessToken;
+export const verifyRefreshTokenAndNewTokens = async (currentRefreshToken) => {
+	try {
+		const decodeRefreshToken = await refreshJWTverifier(currentRefreshToken);
+		const user = await UserModel.findById(decodeRefreshToken._id);
+
+		if (!user) throw new createError(404, 'User not found');
+
+		if (user.refreshToken && user.refreshToken === currentRefreshToken) {
+			const { accessToken, refreshToken } = await JWTAuthenticatorForLogin(
+				user,
+			);
+			return { accessToken, refreshToken };
+		} else {
+			next(createError(401, 'Invalid token'));
+		}
+	} catch (error) {
+		next(error);
+	}
 };
 
 /*****************************************OAuth*******************************************************/
@@ -72,12 +102,14 @@ export const googleOAuth = new GoogleStrategy(
 		clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		callbackURL: `${process.env.API_URL}/users/googleRedirect`,
 	},
+
 	async (accessToken, profile, passportNext) => {
 		try {
 			console.log('OAuth-profile-', profile);
 			const user = await UserModel.findOne({ googleOAuth: profile.id });
 			if (user) {
-				const token = await JWTAuthentication(user);
+				const accessToken = await JWTAuthentication(user);
+				// const refreshToken = await JWTRefreshTokenGenerator(user);
 			} else {
 			}
 		} catch (error) {

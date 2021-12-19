@@ -8,8 +8,10 @@ import {
 } from '../authentication/authentication.js';
 
 const userRouter = express.Router();
-
 const hostRouter = express.Router();
+
+
+/****************************************** USER ***********************************************/
 
 userRouter.post('/register', async (req, res, next) => {
 	try {

@@ -34,6 +34,7 @@ UserSchema.methods.toJSON = function () {
 	const userObj = user.toObject();
 	delete userObj.password;
 	delete userObj.__v;
+	delete userObj.refreshToken;
 	return userObj;
 };
 

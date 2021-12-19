@@ -15,6 +15,7 @@ const {
 	deleteUser,
 	getUserAdmin,
 	editUserAdmin,
+	getRefreshToken,
 	getAllUserAdmin,
 	deleteUserAdmin,
 } = endpoints;
@@ -32,12 +33,9 @@ const {
 const usersRouter = express.Router();
 
 usersRouter.route('/register').post(createUser);
-usersRouter.route('/login').post(login);
-usersRouter.route('/login').post(login);
+usersRouter.route('/refresh').post(getRefreshToken);
 
-usersRouter
-	.route('/')
-	.get(JWTAuthentication, adminAuthentication, getAllUserAdmin);
+usersRouter.route('/login').post(basicAuthentication, login);
 
 /**************************************** USER *************************************************/
 usersRouter
@@ -53,6 +51,10 @@ usersRouter
 	.delete(JWTAuthentication, deletePost);
 
 /**************************************** ADMIN *************************************************/
+usersRouter
+	.route('/')
+	.get(JWTAuthentication, adminAuthentication, getAllUserAdmin);
+
 usersRouter
 	.route('/:id')
 	.get(JWTAuthentication, adminAuthentication, getUserAdmin)

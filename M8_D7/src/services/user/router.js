@@ -1,8 +1,10 @@
-import createHttpError from 'http-errors';
 import UserModel from './schema.js';
-import { JWTAuthenticatorForLogin } from '../../authentication/authenticator.js';
+import createHttpError from 'http-errors';
+import {
+	JWTAuthenticatorForLogin,
+	verifyRefreshTokenAndNewTokens,
+} from '../../authentication/authenticator.js';
 import passport from 'passport';
-
 
 const createUser = async (req, res, next) => {
 	try {
@@ -19,10 +21,12 @@ const login = async (req, res, next) => {
 	try {
 		const { email, password } = req.body;
 		const user = await UserModel.checkCredentials(email, password);
-
 		if (user) {
-			const loginToken = await JWTAuthenticatorForLogin(user);
-			res.send({ loginToken });
+			const { accessToken, refreshToken } = await JWTAuthenticatorForLogin(
+				user,
+			);
+			console.log(accessToken);
+			res.send({ refreshToken, accessToken });
 		} else {
 			next(createHttpError(401, 'User not found'));
 		}
@@ -31,13 +35,21 @@ const login = async (req, res, next) => {
 	}
 };
 
-
-
+const getRefreshToken = async (req, res, next) => {
+	try {
+		const { currentRefreshToken } = req.body;
+		const { accessToken, refreshToken } = await verifyRefreshTokenAndNewTokens(
+			currentRefreshToken,
+		);
+		res.send({ refreshToken, accessToken });
+	} catch (error) {
+		next(createHttpError(401, 'User not found'));
+	}
+};
 /**************************************** USER *************************************************/
 
 const getUser = async (req, res, next) => {
 	try {
-		console.log(req.user);
 		res.status(200).send(req.user);
 	} catch (error) {
 		next(error);
@@ -46,12 +58,10 @@ const getUser = async (req, res, next) => {
 
 const editUser = async (req, res, next) => {
 	try {
-		const body = req.body;
-		const oldUser = req.user;
-		req.user = { ...req.user._doc, ...body };
-		await req.user.save();
-		console.log(req.user);
-		res.send(req.user);
+		req.user = { ...req.user._doc, ...req.body };
+		console.log(111, req.user);
+		await user.save();
+		res.send(user);
 	} catch (error) {
 		next(error);
 	}
@@ -69,8 +79,6 @@ const deleteUser = async (req, res, next) => {
 const getAllUserAdmin = async (req, res, next) => {
 	try {
 		const users = await UserModel.find();
-		// delete users._doc.password;
-		// delete users._doc.__v;
 		res.status(200).send(users);
 	} catch (error) {
 		next(error);
@@ -112,9 +120,9 @@ const endpoints = {
 	createUser,
 	getUserAdmin,
 	editUserAdmin,
+	getRefreshToken,
 	getAllUserAdmin,
 	deleteUserAdmin,
 };
-
 
 export default endpoints;
