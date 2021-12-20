@@ -12,7 +12,11 @@ export default function RegisterPage() {
 		e.preventDefault();
 
 		try {
-			let response = await fetch('http://localhost:3003/users/register', {
+			const params = new URLSearchParams(window.location.search);
+			const accessToken =
+				localStorage.getItem('ACCESS_TOKEN') || params.get('accessToken');
+
+			let res = await fetch('http://localhost:3003/users/register', {
 				method: 'POST',
 				body: JSON.stringify({
 					email,
@@ -22,14 +26,13 @@ export default function RegisterPage() {
 					avatar,
 				}),
 				headers: { 'Content-Type': 'application/json' },
-			});
-			console.log(email, password, firstName, lastName, avatar);
-
-			if (response.ok) {
-				let data = await response.json();
+            });
+            
+			if (res.ok) {
+				let data = await res.json();
 				localStorage.setItem('accessToken', data.accessToken);
 				localStorage.setItem('refreshToken', data.refreshToken);
-				console.log('here is the user info', data);
+				console.log(data);
 			}
 		} catch (error) {
 			console.log(error);
