@@ -15,7 +15,6 @@ const googleOAuth = new GoogleStrategy(
 			console.log(profile);
 			const user = await UserModel.findOne({ googleID: profile.id });
 			if (user) {
-				console.log(11111);
 				//if the user exist
 				const tokens = await JWTAuthenticatorForLogin(user);
 				passportNext(null, { tokens });
@@ -25,15 +24,15 @@ const googleOAuth = new GoogleStrategy(
 					firstName: profile.name.givenName,
 					lastName: profile.name.familyName,
 					avatar: profile.photos[0].value,
-					email: profile.email[0].value,
+					email: profile.emails[0].value,
 					googleID: profile.id,
 				});
 				const saveUser = await newUser.save();
 				const tokens = await JWTAuthenticatorForLogin(saveUser);
-				console.log(33333);
 				passportNext(null, { tokens });
 			}
 		} catch (error) {
+			console.log(error);
 			passportNext(error);
 		}
 	},

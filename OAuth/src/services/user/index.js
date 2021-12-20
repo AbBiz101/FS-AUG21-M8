@@ -53,7 +53,7 @@ usersRouter.get(
 		try {
 			console.log('TOKENS: ', req.user.tokens);
 
-			res.redirect(`http://localhost:3001`);
+			res.redirect(`http://localhost:3000/home`);
 			// res.redirect('http://localhost:3003/users/me');
 		} catch (error) {
 			next(error);
