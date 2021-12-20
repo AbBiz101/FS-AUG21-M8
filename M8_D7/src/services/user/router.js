@@ -4,6 +4,7 @@ import {
 	JWTAuthenticatorForLogin,
 	verifyRefreshTokenAndNewTokens,
 } from '../../authentication/authenticator.js';
+import passport from 'passport';
 
 const createUser = async (req, res, next) => {
 	try {
