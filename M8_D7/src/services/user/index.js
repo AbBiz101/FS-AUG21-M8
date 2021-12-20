@@ -34,7 +34,7 @@ const usersRouter = express.Router();
 
 usersRouter.route('/register').post(createUser);
 usersRouter.route('/refresh').post(getRefreshToken);
-usersRouter.route('/login').post(basicAuthentication, login);
+usersRouter.route('/login').post(login);
 
 /**************************************** USER *************************************************/
 usersRouter

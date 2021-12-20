@@ -4,8 +4,8 @@ import postEndpoints from '../post/router.js';
 import {
 	JWTAuthentication,
 	adminAuthentication,
-	basicAuthentication,
 } from '../../authentication/authenticator.js';
+import passport from 'passport';
 
 const {
 	login,
@@ -32,10 +32,34 @@ const {
 
 const usersRouter = express.Router();
 
+/**************************************** LOGIN/REGISTER *************************************************/
 usersRouter.route('/register').post(createUser);
 usersRouter.route('/refresh').post(getRefreshToken);
+usersRouter.route('/login').post(login);
 
-usersRouter.route('/login').post(basicAuthentication, login);
+/**************************************** OAUTH *************************************************/
+
+usersRouter.get(
+	'/googleLogin',
+	passport.authenticate('google', {
+		scope: ['profile', 'email'],
+	}),
+);
+
+usersRouter.get(
+	'/googleRedirect',
+	passport.authenticate('google'),
+	async (req, res, next) => {
+		try {
+			console.log('TOKENS: ', req.user.tokens);
+
+			res.redirect(`http://localhost:3001`);
+			// res.redirect('http://localhost:3003/users/me');
+		} catch (error) {
+			next(error);
+		}
+	},
+);
 
 /**************************************** USER *************************************************/
 usersRouter
@@ -54,7 +78,6 @@ usersRouter
 usersRouter
 	.route('/')
 	.get(JWTAuthentication, adminAuthentication, getAllUserAdmin);
-
 usersRouter
 	.route('/:id')
 	.get(JWTAuthentication, adminAuthentication, getUserAdmin)

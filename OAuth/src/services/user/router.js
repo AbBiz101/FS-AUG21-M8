@@ -13,7 +13,7 @@ const createUser = async (req, res, next) => {
 		delete newUser._doc.__v;
 		res.status(201).send(newUser);
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 	}
 };
 
@@ -35,6 +35,7 @@ const login = async (req, res, next) => {
 	}
 };
 
+/**************************************** REFRESH TOKEN *************************************************/
 const getRefreshToken = async (req, res, next) => {
 	try {
 		const { currentRefreshToken } = req.body;
@@ -47,8 +48,17 @@ const getRefreshToken = async (req, res, next) => {
 	}
 };
 
-/**************************************** USER *************************************************/
+/**************************************** OAUTH *************************************************/
 
+// const googleRedirect = async (req, res, next) => {
+// 	try {
+// 		res.redirect('http://localhost:3000');
+// 	} catch (error) {
+// 		next(error);
+// 	}
+// };
+
+/**************************************** USER *************************************************/
 const getUser = async (req, res, next) => {
 	try {
 		res.status(200).send(req.user);
@@ -76,6 +86,7 @@ const deleteUser = async (req, res, next) => {
 		next(error);
 	}
 };
+
 /**************************************** ADMIN *************************************************/
 const getAllUserAdmin = async (req, res, next) => {
 	try {
@@ -127,3 +138,5 @@ const endpoints = {
 };
 
 export default endpoints;
+
+// http://localhost:3003/users/googleRedirect

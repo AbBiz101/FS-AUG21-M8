@@ -9,7 +9,7 @@ const UserSchema = new Schema(
 		lastName: { type: String, required: true },
 		avatar: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
-		password: { type: String, required: true },
+		password: { type: String },
 		refreshToken: { type: String },
 		googleID: { type: String },
 		role: { type: String, default: 'USER' },
