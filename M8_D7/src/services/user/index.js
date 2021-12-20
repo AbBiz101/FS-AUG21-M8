@@ -34,12 +34,7 @@ const usersRouter = express.Router();
 
 usersRouter.route('/register').post(createUser);
 usersRouter.route('/refresh').post(getRefreshToken);
-<<<<<<< HEAD
 usersRouter.route('/login').post(login);
-=======
-
-usersRouter.route('/login').post(basicAuthentication, login);
->>>>>>> parent of 3493c0a (JWT with 2 tokens)
 
 /**************************************** USER *************************************************/
 usersRouter
