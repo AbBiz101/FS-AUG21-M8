@@ -50,13 +50,16 @@ const getRefreshToken = async (req, res, next) => {
 
 /**************************************** OAUTH *************************************************/
 
-// const googleRedirect = async (req, res, next) => {
-// 	try {
-// 		res.redirect('http://localhost:3000');
-// 	} catch (error) {
-// 		next(error);
-// 	}
-// };
+const googleRedirect = async (req, res, next) => {
+	try {
+		console.log('TOKENS: ', req.user.tokens);
+
+		res.redirect(`http://localhost:3000/home`);
+		// res.redirect('http://localhost:3003/users/me');
+	} catch (error) {
+		next(error);
+	}
+};
 
 /**************************************** USER *************************************************/
 const getUser = async (req, res, next) => {
@@ -132,6 +135,7 @@ const endpoints = {
 	createUser,
 	getUserAdmin,
 	editUserAdmin,
+	googleRedirect,
 	getRefreshToken,
 	getAllUserAdmin,
 	deleteUserAdmin,

@@ -14,6 +14,7 @@ const {
 	createUser,
 	deleteUser,
 	getUserAdmin,
+	googleRedirect,
 	editUserAdmin,
 	getRefreshToken,
 	getAllUserAdmin,
@@ -49,16 +50,7 @@ usersRouter.get(
 usersRouter.get(
 	'/googleRedirect',
 	passport.authenticate('google'),
-	async (req, res, next) => {
-		try {
-			console.log('TOKENS: ', req.user.tokens);
-
-			res.redirect(`http://localhost:3000/home`);
-			// res.redirect('http://localhost:3003/users/me');
-		} catch (error) {
-			next(error);
-		}
-	},
+	googleRedirect,
 );
 
 /**************************************** USER *************************************************/

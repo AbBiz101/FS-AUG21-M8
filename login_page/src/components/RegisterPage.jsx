@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Form, Button, Col } from 'react-bootstrap';
 
 export default function RegisterPage() {
+	const history = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [firstName, setFirstName] = useState('');
@@ -16,7 +18,7 @@ export default function RegisterPage() {
 			const accessToken =
 				localStorage.getItem('ACCESS_TOKEN') || params.get('accessToken');
 
-			let res = await fetch('http://localhost:3003/users/register', {
+			let res = await fetch('http://localhost:3010/user/register', {
 				method: 'POST',
 				body: JSON.stringify({
 					email,
@@ -26,13 +28,14 @@ export default function RegisterPage() {
 					avatar,
 				}),
 				headers: { 'Content-Type': 'application/json' },
-            });
-            
+			});
+
 			if (res.ok) {
 				let data = await res.json();
 				localStorage.setItem('accessToken', data.accessToken);
 				localStorage.setItem('refreshToken', data.refreshToken);
 				console.log(data);
+				history('/home');
 			}
 		} catch (error) {
 			console.log(error);
