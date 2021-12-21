@@ -5,7 +5,7 @@ export const JWTTokenGenerator = (payload) =>
 		jwt.sign(
 			payload,
 			process.env.JWT_SECRET,
-			{ expiresIn: '1m' },
+			{ expiresIn: '1 week' },
 			(err, token) => {
 				if (err) reject(err);
 				else resolve(token);
@@ -41,4 +41,3 @@ export const refreshJWTverifier = (token) =>
 			else res(decodedToken);
 		}),
 	);
-
