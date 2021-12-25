@@ -13,7 +13,17 @@ const io = new Server(http, {});
 
 // defining event handler
 io.on('connection', (socket) => {
-	console.log(Socket.id);
+	console.log(socket.id);
+
+	// this will print on FE
+	socket.emit('txt', { message: 'new text' });
+	// this happened on the BE socket.on('txt', (data) => {console.log(data)})
+
+	//this will print whatever comes from the FE
+	socket.on('xxxx', (data) => {
+		console.log(data);
+	});
+	//this happened on the FE socket.emit('xxxx', { message: 'new text' });
 
 	socket.on('disconnect', () => {
 		console.log(`${socket.id} disconnect.`);
@@ -23,5 +33,5 @@ io.on('connection', (socket) => {
 // start the http server not the express app coz it would initialize
 // and start another instance of http server which dont include io config
 http.listen(3030, () => {
-    console.log('Listening on 3030')
+	console.log('Listening on 3030');
 });

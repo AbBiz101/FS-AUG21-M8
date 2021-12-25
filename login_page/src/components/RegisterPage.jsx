@@ -10,15 +10,25 @@ export default function RegisterPage() {
 	const [lastName, setLastName] = useState('');
 	const [avatar, setAvatar] = useState('');
 
+	import { Card } from 'react-bootstrap';
+	{
+		allData.map((data) => {
+			<Card id={data.id} style={{ width: '18rem' }}>
+				<Card.Body>
+					<Card.Title>{data.name}</Card.Title>
+					<Card.Subtitle className="mb-2 text-muted">
+						Price-<strong>{data.price}€</strong>
+					</Card.Subtitle>
+					<Card.Text>Quantity-{data.quantity}</Card.Text>
+				</Card.Body>
+			</Card>;
+		});
+	}
 	const registerHandler = async (e) => {
 		e.preventDefault();
 
 		try {
-			const params = new URLSearchParams(window.location.search);
-			const accessToken =
-				localStorage.getItem('ACCESS_TOKEN') || params.get('accessToken');
-
-			let res = await fetch('http://localhost:3010/user/register', {
+			let res = await fetch('http://localhost:8000/api/Products', {
 				method: 'POST',
 				body: JSON.stringify({
 					email,
@@ -35,7 +45,6 @@ export default function RegisterPage() {
 				localStorage.setItem('accessToken', data.accessToken);
 				localStorage.setItem('refreshToken', data.refreshToken);
 				console.log(data);
-				history('/home');
 			}
 		} catch (error) {
 			console.log(error);
